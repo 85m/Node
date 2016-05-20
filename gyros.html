@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr-FR" >
+	<head>
+		<title>Device orientation</title>
+	</head>
+	<body>
+	<div id="content" style="font-size:60px;"></div>
+	<script>
+		window.addEventListener('deviceorientation', function(event){
+			document.getElementById("content").innerHTML = 
+			"beta= "  + Math.round(event.beta) + " <br/> " +
+			"gamma= " + Math.round(event.gamma) + " <br/> " +
+			"alpha= " + Math.round(event.alpha);
+		});
+	</script>
+	</body>
+</html>
