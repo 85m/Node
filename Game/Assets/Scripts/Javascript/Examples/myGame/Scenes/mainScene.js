@@ -24,6 +24,8 @@ function mainScene()
 
 	this.WorldSize = new Vector(4096,4096);
 
+	this.ennemyCounter = 0;
+
 	/**
 	 * Called at the instruction new Scene().
 	 * */
@@ -42,14 +44,19 @@ function mainScene()
 		if (!this.started) 
 		{
 			Time.SetTimeWhenSceneBegin();
+
+			canvas.style.background = 'black';
 			// operation start
 			var character = new Character();
 			this.GameObjects.push(character);
 
-			for (var i = 0; i < 10; i++) {
+
+
+
+/*			for (var i = 0; i < 10; i++) {
 				var enemy = new Enemy();
 				this.GameObjects.push(enemy);
-			}
+			}*/
 
 			this.started = true;
 			Print('System:Scene ' + this.name + " Started !");
@@ -65,6 +72,15 @@ function mainScene()
 	{
 		if (!Application.GamePaused) 
 		{
+			this.ennemyCounter++;
+			console.log(this.ennemyCounter);
+			if(this.ennemyCounter == 30){
+				this.ennemyCounter = 0;
+				if(Math.random() > 0.45){
+					var enemy = new Enemy();
+					this.GameObjects.push(enemy);
+				}
+			}
 			for (var i = 0; i < this.GameObjects.length; i++) 
 			{
 				this.GameObjects[i].Start();

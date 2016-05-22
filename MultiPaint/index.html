@@ -26,7 +26,7 @@
 	
 	// Online 
 	//-----------------------------------------------------------------------------------
-		var url = 'http://10.10.7.54:8080';
+		var url = 'http://192.168.100.100:8080';
 		var socket = io.connect(url);
 
 		socket.on('moving', function (data) 
@@ -34,7 +34,6 @@
 			// Is the user drawing?
 			if(data.drawing && clients[data.id])
 			{
-				
 				drawLine(
 					clients[data.id].x,
 					clients[data.id].y,
@@ -53,6 +52,7 @@
 		document.addEventListener('mousedown',function(e)
 		{
 			e.preventDefault();
+			e.stopPropagation();
 			drawing = true;
 			prev.x = e.pageX;
 			prev.y = e.pageY;
@@ -84,6 +84,7 @@
 			if(drawing)
 			{
 				colorPicker = document.getElementById('choseColor').value;
+				pointerSize = document.getElementById('pSize').innerText;
 				drawLine(prev.x, prev.y, e.pageX, e.pageY,colorPicker,pointerSize);
 
 				prev.x = e.pageX;
@@ -110,7 +111,7 @@
 			ctx.strokeStyle = color;
 			ctx.moveTo(fromx, fromy);
 			ctx.lineTo(tox, toy);
-			ctx.lineWidth = pointerSize;
+			ctx.lineWidth = lineWidth;
 			ctx.stroke();
 			ctx.closePath();
 		}

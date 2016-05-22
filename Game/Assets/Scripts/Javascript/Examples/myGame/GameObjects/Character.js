@@ -349,6 +349,8 @@ function Character()
 			//For collider
 			this.boxCollider = new Box(bX,bY,bW,bH);
 
+
+
 			this.started = true;
 			Print('System:GameObject ' + this.name + " Started !");
 		}
@@ -411,10 +413,9 @@ function Character()
 	{
 
 		this.Renderer.Draw();
+		var killDistance = 150;//light and kill
 
-		console.log(Input.Device.Orientation);
-
-
+		//this.Transform.angle = -Input.Orientation;
 		if(Input.KeysDown[37]){
 			this.Transform.angle -= this.velocity;
 		}
@@ -428,7 +429,11 @@ function Character()
 
 			if(go.name != 'Character'){
 				var distance = Math.EuclidianDistance(this.Transform.Position, go.Transform.Position);
-				if(distance < 150){
+				if(distance < 320){
+					go.Renderer.opacity.alpha += .01;
+				}
+				if(distance < killDistance){
+					go.Renderer.opacity.alpha = 1;
 					var res = Math.DotProduct(this.charSigth, go.charSigth);
 					if(res > 0.8){
 						 Application.LoadedScene.GameObjects.splice(i,1);
@@ -437,11 +442,29 @@ function Character()
 
 			}
 		}
-		ctx.beginPath();
-		ctx.arc(this.Transform.Position.x, this.Transform.Position.y, 100, 0, 2 * Math.PI, false);
-		ctx.fillStyle = 'rgba(255,0,0,.7)';
-		ctx.fill();
 
+/*		var Pi = Math.PI;
+	 ctx.beginPath();
+	 var startAngle = .4*Pi;
+	 var endAngle = .6*Pi;
+
+	 //ctx.moveTo(this.Transform.Position.x, this.Transform.Position.y-15);
+	 //ctx.lineTo(this.Transform.Position.x, this.Transform.Position.y-15);
+	 ctx.arc(
+	 this.Transform.Position.x,
+	 this.Transform.Position.y-15,
+	 70,
+	 startAngle,
+	 endAngle,
+	 false);
+	 ctx.stroke();*/
+		var x = this.Transform.Position.x,y = this.Transform.Position.y-15, innerRadius = 20,outerRadius = killDistance, radius = outerRadius;
+		var gradient = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
+		gradient.addColorStop(0.000, 'rgba(255, 255, 255, .2)');
+		gradient.addColorStop(1.000, 'rgba(255, 255, 255, 0.000)');
+		ctx.arc(x, y, radius, 0, 2 * Math.PI);
+		ctx.fillStyle = gradient;
+		ctx.fill();
 
 
 		this.PostUpdate();	

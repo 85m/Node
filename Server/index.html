@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Technobel GameEngine</title>
+	<link rel="stylesheet" href="Assets/Scripts/CSS/style.css">
+	<meta name="charset" content="utf-8">
+	<link rel="icon" href="Assets/Graphics/Logos/favicon.ico" />
+</head>
+<body>
+	<script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
+	<script>
+		var socket = io.connect('http://localhost:3000');
+		socket.on('position', function(data) {
+			console.log(data);
+		});
+
+		socket.emit('message', 'connecter');
+
+
+		window.addEventListener('deviceorientation',function(e){
+			var alpha = e.alpha;
+			socket.emit('orientationAlpha', alpha);
+		});
+
+	</script>
+
+</body>
+</html>

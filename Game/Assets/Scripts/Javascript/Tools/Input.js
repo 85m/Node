@@ -120,7 +120,7 @@ var Input =
 		Input.MouseDraggedElement = null;
 	},
 	Device:function(e){
-		console.log(e);
-		Input.Orientation = e;
+		//console.log(e);
+		Input.Orientation = Math.round(e.alpha);
 	}
 }

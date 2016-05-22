@@ -1,6 +1,6 @@
 var express = require('express');
-var path = require("path");
 var app = express();
+var path = require("path");
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
@@ -15,7 +15,7 @@ var Req =
 	{
 	    socket.on('mousemove', function (data) 
 	    {
-	    	console.log(data);
+	    	//console.log(data);
 			socket.broadcast.emit('moving', data);
 		});
 

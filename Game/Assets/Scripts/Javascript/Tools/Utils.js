@@ -105,3 +105,24 @@ CanvasRenderingContext2D.prototype.RoundedBox = function(_x, _y, _w, _h, _r)
     this.closePath();
     this.fill();
 };
+
+
+
+
+
+
+
+function DrawCircle(config){
+    ctx.beginPath();
+    this.startAngle = config.startAngle || 0 * Math.PI;
+    this.endAngle = config.endAngle || 2 * Math.PI;
+    ctx.arc(
+        config.x,
+        config.y,
+        config.radius,
+        this.startAngle,
+        this.endAngle,
+        config.clock);
+    ctx.fillStyle = config.color;
+    ctx.fill();
+}

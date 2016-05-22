@@ -196,6 +196,10 @@ function Enemy()
 			CurrentFrame: new Vector(),
 		},
 		animationCount:0,
+		opacity:{
+			status:false,
+			alpha:1
+		},
 		Animation:
 		{
 			animated: true,
@@ -220,6 +224,11 @@ function Enemy()
 			var ScaledSizeY = this.That.Size.y*this.That.Scale.y;
 
 			ctx.save();
+
+			if(this.opacity.status){
+				ctx.globalAlpha = this.opacity.alpha;
+			}
+
 			ctx.translate((this.That.Position.x), (this.That.Position.y));
 			ctx.rotate(Math.DegreeToRadian(this.That.angle));
 			if (this.isSpriteSheet) 
@@ -330,9 +339,12 @@ function Enemy()
 			// operation start
 
 			this.Renderer.Material.Source = Images["Enemy Bug"];
+			this.Renderer.opacity.status = true;
+			this.Renderer.opacity.alpha = 0;
 
 			//For random position defined by center of screen (position of hero)
-			var c = new Circle(canvas.width/2,canvas.height/2,300);
+			var EnemyDistanceByHero = 500;
+			var c = new Circle(canvas.width/2,canvas.height/2,EnemyDistanceByHero);
 			var newP = Math.Random.InCircle(c);
 
 			var bX = newP.x;
@@ -426,6 +438,7 @@ function Enemy()
 		this.charSigth = new Vector(1,1).FromAngle( Math.DegreeToRadian(this.Transform.angle) ).Normalize();
 		//console.log(this.charSigth);
 
+		console.log(this.Renderer.opacity);
 		this.Renderer.Draw();
 
 		this.PostUpdate();	

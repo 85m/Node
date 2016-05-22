@@ -1,16 +1,11 @@
-var port = 8000;
 var express = require('express');
-var app = express();
-var serverUrl = app.get('10.10.7.54');//"127.0.0.1";
+//var app = express();
+var http = require('http');
+var path = require("path");
+var fs = require('fs');
 
-var http = require("http");
-var path = require("path"); 
-var fs = require("fs"); 		
-
-console.log("Starting web server at " + serverUrl + ":" + port);
-
-http.createServer( function(req, res) 
-{
+// Chargement du fichier index.html affiché au client
+var server = http.createServer(function(req, res) {
 
 	var now = new Date();
 
@@ -18,16 +13,16 @@ http.createServer( function(req, res)
 	var ext = path.extname(filename);
 	var localPath = __dirname;
 	var validExtensions = {
-		".html" : "text/html",			
-		".js": "application/javascript", 
+		".html" : "text/html",
+		".js": "application/javascript",
 		".css": "text/css",
 		".txt": "text/plain",
 		".jpg": "image/jpeg",
 		".gif": "image/gif",
 		".png": "image/png",
-		".ico": "icon",
+		".ico": "icon"
 	};
-	console.log("toto " + localPath);
+	//console.log("toto " + localPath);
 	var isValidExt = validExtensions[ext];
 
 	if (isValidExt) {
@@ -37,7 +32,7 @@ http.createServer( function(req, res)
 				console.log("Serving file: " + localPath);
 				getFile(localPath, res, isValidExt);
 			} else {
-				console.log("File not found: " + localPath);
+				//console.log("File not found: " + localPath);
 				res.writeHead(404);
 				res.end();
 			}
@@ -47,10 +42,26 @@ http.createServer( function(req, res)
 		console.log("Invalid file extension detected: " + ext);
 	}
 
-}).listen(port, serverUrl);
+});
+// Chargement de socket.io
+var io = require('socket.io').listen(server);
+
+
+// Quand un client se connecte, on le note dans la console
+io.on('connection', function (socket) {
+	socket.on('message', function (data) {
+		console.log(data);
+	});
+	socket.on('orientationAlpha', function (data) {
+		console.log(data);
+	});
+});
+
+server.listen(8080);
+
+/**************************************************************************/
 
 function getFile(localPath, res, mimeType) {
-	
 	fs.readFile(localPath, function(err, contents) {
 		if(!err) {
 			res.setHeader("Content-Length", contents.length);
