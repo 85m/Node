@@ -30,7 +30,7 @@ window.addEventListener("mouseup", Input.MouseUp);
 window.addEventListener("mousedown", Input.MouseDown);
 window.addEventListener("mousemove", Input.MouseMove);
 
-window.addEventListener("deviceorientation", Input.Device);
+//window.addEventListener("deviceorientation", Input.Device);
 
 
 /********************

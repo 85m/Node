@@ -55,7 +55,10 @@ function Loader()
 			Scenes["SceneIA"]  = new SceneIA();	
 			
 
-			Scenes["mainScene"]  = new mainScene();	
+			
+
+			Scenes["mainScene"]  = new mainScene();
+			Scenes["SceneGameOver"]  = new SceneGameOver();	
 
 			LoadImages();
 			this.started = true;

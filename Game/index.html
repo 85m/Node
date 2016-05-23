@@ -81,8 +81,10 @@
 
 		<!-- My Game -->
 		<script type="text/javascript" src="Assets/Scripts/Javascript/Examples/myGame/GameObjects/Character.js"></script>
+		<script type="text/javascript" src="Assets/Scripts/Javascript/Examples/myGame/GameObjects/Life.js"></script>
 		<script type="text/javascript" src="Assets/Scripts/Javascript/Examples/myGame/GameObjects/Enemy.js"></script>
 		<script type="text/javascript" src="Assets/Scripts/Javascript/Examples/myGame/Scenes/mainScene.js"></script>
+		<script type="text/javascript" src="Assets/Scripts/Javascript/Examples/myGame/Scenes/GameOver.js"></script>
 
 		<!-- ******* -->
 
@@ -126,20 +128,35 @@
 	<script type="text/javascript" src="Assets/Scripts/Javascript/Game/Game.js"></script>
 	<script type="text/javascript" src="Assets/Scripts/Javascript/Game/Init.js"></script>
 
-	<!--<script src="/socket.io/socket.io.js"></script>-->
 	<script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
 	<script>
-		var socket = io.connect('http://localhost:8080');
-		socket.on('position', function(data) {
-			console.log(data);
+		var socket = io.connect('http://10.10.7.51:8080');
+		Application.GamePaused = true;
+
+		
+		socket.emit('message', 'Jeux connecté');
+
+		socket.on('orientationAlpha2', function(data) {
+			//console.log(data);
+			Input.Mobile.connected 	= data.connected;
+			Input.Mobile.alpha 		= data.alpha;
 		});
-		socket.emit('message', 'connecter');
-		window.addEventListener('deviceorientation',function(e){
-			var alpha = e.alpha;
-			socket.emit('orientationAlpha', alpha);
+
+		socket.on('calibrationStatus', function(data) {
+			console.log(data);
+			if(data){
+				Application.GamePaused = false;
+			}
+		});
+
+		socket.on('canRestart', function(data) {
+			console.log(data);
+			if(data){
+				Scenes["mainScene"]  	= new mainScene();
+				Application.LoadedScene = Scenes["mainScene"];
+			}
 		});
 
 	</script>
-
 </body>
 </html>

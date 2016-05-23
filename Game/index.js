@@ -7,9 +7,9 @@ var fs = require('fs');
 // Chargement du fichier index.html affiché au client
 var server = http.createServer(function(req, res) {
 
-	var now = new Date();
+var now = new Date();
 
-	var filename = req.url || "index.html";
+	var filename = req.url;
 	var ext = path.extname(filename);
 	var localPath = __dirname;
 	var validExtensions = {
@@ -42,25 +42,38 @@ var server = http.createServer(function(req, res) {
 		console.log("Invalid file extension detected: " + ext);
 	}
 
+
+
 });
 // Chargement de socket.io
 var io = require('socket.io').listen(server);
-
-
-// Quand un client se connecte, on le note dans la console
 io.on('connection', function (socket) {
+
 	socket.on('message', function (data) {
 		console.log(data);
 	});
+
 	socket.on('orientationAlpha', function (data) {
+		socket.broadcast.emit('orientationAlpha2',data);
+		//console.log(data);
+	});
+
+	socket.on('calibrationWaited', function (data) {
+		socket.broadcast.emit('calibrationStatus',data);
+		//console.log(data);
+	});
+
+	socket.on('restartGame', function (data) {
 		console.log(data);
+		if(data){
+			socket.broadcast.emit('canRestart', true);
+		}
 	});
 });
 
 server.listen(8080);
 
 /**************************************************************************/
-
 function getFile(localPath, res, mimeType) {
 	fs.readFile(localPath, function(err, contents) {
 		if(!err) {

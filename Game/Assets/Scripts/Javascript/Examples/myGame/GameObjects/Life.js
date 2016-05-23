@@ -26,9 +26,9 @@
  *
  *
  * */
-function Enemy() 
+function Life(config) 
 {
-	this.name = "Enemy";
+	this.name = "Life";
 	this.enabled = true;
 	this.started = false;
 	this.rendered = true;
@@ -36,7 +36,7 @@ function Enemy()
 
 	this.MouseOffset = new Vector();
 
-	this.velocity = 5;
+	this.velocity = 4;
 	this.charSigth = new Vector();
 
 	this.Parent = null;
@@ -196,10 +196,6 @@ function Enemy()
 			CurrentFrame: new Vector(),
 		},
 		animationCount:0,
-		opacity:{
-			status:false,
-			alpha:1
-		},
 		Animation:
 		{
 			animated: true,
@@ -224,11 +220,6 @@ function Enemy()
 			var ScaledSizeY = this.That.Size.y*this.That.Scale.y;
 
 			ctx.save();
-
-			if(this.opacity.status){
-				ctx.globalAlpha = this.opacity.alpha;
-			}
-
 			ctx.translate((this.That.Position.x), (this.That.Position.y));
 			ctx.rotate(Math.DegreeToRadian(this.That.angle));
 			if (this.isSpriteSheet) 
@@ -338,40 +329,22 @@ function Enemy()
 		if (!this.started) {
 			// operation start
 
-			this.Renderer.Material.Source = Images["Enemy Bug"];
-			this.Renderer.opacity.status = true;
-			this.Renderer.opacity.alpha = 0;
+			this.Renderer.Material.Source = Images["Heart"];
 
-			//For random position defined by center of screen (position of hero)
-			var EnemyDistanceByHero = 500;
-			var c = new Circle(canvas.width/2,canvas.height/2,EnemyDistanceByHero);
-			var newP = Math.Random.InCircle(c);
-
-			var bX = newP.x;
-			var bY = newP.y;
-			var bW = 100/2;
-			var bH = 200/2;
-
+			var bX = config.x;
+			var bY = canvas.height - Images["Heart"].height;
+			var bW = 101;
+			var bH = 171;
 
 			this.SetPosition(bX,bY);
 			this.SetSize(bW,bH);
 			this.SetScale(1,1);
-			this.SetPivot(0.505,0.67);
-
-
-			var c = new Vector(bX - canvas.width/2,bY - canvas.height/2);
-			var newAngle = Math.RadianToDegree( c.GetAngle() );
-
-			this.Transform.angle = newAngle + 180;
+			this.SetPivot(0,0);
 
 			if (this.Physics.colliderIsSameSizeAsTransform) 
 			{
 				this.Physics.Collider = this.Transform;
 			}
-
-			//for collider
-			this.Collider = new Box(bX,bY,bW,bH);
-
 			this.started = true;
 			Print('System:GameObject ' + this.name + " Started !");
 		}
@@ -432,15 +405,9 @@ function Enemy()
 	 * */
 	this.Update = function() 
 	{
-		this.Transform.RelativePosition.x += Math.cos( Math.DegreeToRadian(this.Transform.angle)) * 2 ;
-		this.Transform.RelativePosition.y += Math.sin( Math.DegreeToRadian(this.Transform.angle)) * 2 ;
 
-		this.charSigth = new Vector(1,1).FromAngle( Math.DegreeToRadian(this.Transform.angle) ).Normalize();
-		//console.log(this.charSigth);
-
-		//console.log(this.Renderer.opacity);
 		this.Renderer.Draw();
-
+	
 		this.PostUpdate();	
 	};
 	/**

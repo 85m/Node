@@ -1,0 +1,118 @@
+ <!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Mobile</title>
+	<meta name="charset" content="utf-8">
+	<style type="text/css" media="screen">
+	html,body,.wrapper{height: 100%;}
+		.wrapper{
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: flex;
+		    -webkit-flex-direction: column;
+		    -ms-flex-direction: column;
+		    flex-direction: column;
+		    -webkit-flex-wrap: nowrap;
+		    -ms-flex-wrap: nowrap;
+		    flex-wrap: nowrap;
+		    -webkit-justify-content: center;
+		    -ms-flex-pack: center;
+		    justify-content: center;
+		    -webkit-align-content: stretch;
+		    -ms-flex-line-pack: stretch;
+		    align-content: stretch;
+		    -webkit-align-items: center;
+		    -ms-flex-align: center;
+		    align-items: center;
+		}
+		#calibrate{
+			width: 400px;
+			height: 150px;
+			font-size: 25px;
+			-webkit-appearance: none;
+			-webkit-border-radius:0; 
+			border-radius: 0;
+			background-color: #F4F4F4;
+			margin-bottom: 20px;
+
+		    -webkit-order: 0;
+		    -ms-flex-order: 0;
+		    order: 0;
+		    -webkit-flex: 0 1 auto;
+		    -ms-flex: 0 1 auto;
+		    flex: 0 1 auto;
+		    -webkit-align-self: center;
+		    -ms-flex-item-align: center;
+		    align-self: center;
+		}
+		#restart{
+			width: 400px;
+			height: 150px;
+			font-size: 25px;
+			-webkit-appearance: none;
+			-webkit-border-radius:0; 
+			border-radius: 0;
+
+		    -webkit-order: 0;
+		    -ms-flex-order: 0;
+		    order: 0;
+		    -webkit-flex: 0 1 auto;
+		    -ms-flex: 0 1 auto;
+		    flex: 0 1 auto;
+		    -webkit-align-self: center;
+		    -ms-flex-item-align: center;
+		    align-self: center;
+		}
+
+
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<button id="calibrate">Calibrate</button>
+		<button id="restart" type="button">Restart</button>
+	</div>
+	<script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
+	<script>
+	var socket = io.connect('http://10.10.7.51:8080');
+	socket.emit('message', 'Controleur connecté');
+	var lastEmit = Date.now();
+
+	var calibrate = false,
+	calibrateA = 0,
+	btnCalibrate = document.getElementById('calibrate');
+	btnRestart = document.getElementById('restart');
+
+	btnCalibrate.onclick = function() {
+		btnCalibrate.style.background = 'lightgreen';
+		calibrate = true;
+		socket.emit('calibrationWaited', calibrate );
+	};
+
+	btnRestart.onclick = function() {
+		btnRestart.style.background = 'tomato';
+		socket.emit('restartGame', true);
+	};
+
+
+
+	window.addEventListener('deviceorientation',function(e){
+ 		if (calibrate) {
+ 			calibrateA = e.alpha;
+ 			calibrate = false;
+ 		}
+        var alpha = parseInt(e.alpha - calibrateA);
+		if(Date.now() - lastEmit > 30)
+		{
+			socket.emit('orientationAlpha', {
+				connected:true,
+				alpha: alpha
+			});
+			lastEmit = Date.now();
+		}
+	});
+	</script>
+</body>
+</html>

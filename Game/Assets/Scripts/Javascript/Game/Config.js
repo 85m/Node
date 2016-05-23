@@ -19,12 +19,11 @@ var Scenes = {};
 var Gravity = new Vector();
 Gravity.y = -9.81;
 
-
 var Application = 
 {
 	LoadedScene: null,
 	gamePaused: false,
-	debugMode: false
+	debugMode: true
 };
 
 var imagesLoaded = 0;
@@ -33,7 +32,10 @@ var WalkableTiles = [];
 var ImagesPath = 
 [
 	// { name:"monImage",path: "background/image.png"},
-	{ name:"Boy",path: "Examples/PlanetCute/Character_Boy.png"},
-	{ name:"Enemy Bug",path: "Examples/PlanetCute/Enemy_Bug.png"}
+	{ name:"Boy",		path: "Examples/PlanetCute/Character_Boy.png"},
+	{ name:"Enemy Bug",	path: "Examples/PlanetCute/Enemy_Bug.png"},
+	{ name:"Heart",	path: "Examples/PlanetCute/Heart.png"}
 ];
 var Images = {};
+
+var GameStatus = false;

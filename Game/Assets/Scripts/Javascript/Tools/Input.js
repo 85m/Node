@@ -17,7 +17,10 @@ var Input =
 	mouseReload: 0,
 	mouseDraging: false,
 	MouseDraggedElement: null,
-	Orientation: 0,
+	Mobile:{
+		connected: false,
+		alpha : 0
+	},
 	
 	/**
 	 * 
@@ -118,9 +121,5 @@ var Input =
 		Input.mouseReload = 0;
 		Input.mouseDraging = false;
 		Input.MouseDraggedElement = null;
-	},
-	Device:function(e){
-		//console.log(e);
-		Input.Orientation = Math.round(e.alpha);
 	}
 }

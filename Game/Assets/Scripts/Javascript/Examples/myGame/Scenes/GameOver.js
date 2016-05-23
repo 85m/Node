@@ -12,9 +12,9 @@
  * 
  * @return {Scene}
  * */
-function mainScene() 
+function SceneGameOver() 
 {
-	this.name = "mainScene";
+	this.name = "SceneGameOver";
 	this.GameObjects =[];
 	this.Groups = [];
 	this.Cameras = [];
@@ -24,9 +24,7 @@ function mainScene()
 
 	this.WorldSize = new Vector(4096,4096);
 
-	this.player = null;
-	this.ennemyCounter = 0;
-
+	this.Score = null;
 
 	/**
 	 * Called at the instruction new Scene().
@@ -47,16 +45,9 @@ function mainScene()
 		{
 			Time.SetTimeWhenSceneBegin();
 
-			canvas.style.background = 'black';
+			//canvas.style.background = 'black';
 			// operation start
-			var character = new Character();
-			this.player = character;
-			this.GameObjects.push(character);
-
-/*			for (var i = 0; i < 10; i++) {
-				var enemy = new Enemy();
-				this.GameObjects.push(enemy);
-			}*/
+			GameStatus = false;
 
 			this.started = true;
 			Print('System:Scene ' + this.name + " Started !");
@@ -73,14 +64,6 @@ function mainScene()
 
 		if (!Application.GamePaused) 
 		{
-			this.ennemyCounter++;
-			if(this.ennemyCounter == 40){
-				this.ennemyCounter = 0;
-				if(Math.random() > 0.60){
-					var enemy = new Enemy();
-					this.GameObjects.push(enemy);
-				}
-			}
 			for (var i = 0; i < this.GameObjects.length; i++) 
 			{
 				this.GameObjects[i].Start();
@@ -102,30 +85,32 @@ function mainScene()
 	 * */
 	this.GUI = function() 
 	{
-		var thePlayer = Application.LoadedScene.player;
+/*		if(Application.GamePaused){
+			ctx.font = "30px Arial";
+			ctx.fillText("Controller calibration waited",10,50);
+		}*/
+
 		if (!Application.GamePaused) 
 		{
-			ctx.font = "30px Arial";
-			ctx.fillStyle = "#fff";
-			ctx.fillText('Scores: '+ thePlayer.killCounter, canvas.width - 200, canvas.height - 50);
 			//Show UI
-			//SET CHARACTER LIFE
+			var W = 200, midW = (W/2);
+			var H = 75, midH = (H/2);
+			var X = (canvas.width / 2) - midW;
+			var Y = (canvas.height / 2) - midH;
 
-			for(var i = 0 ; i < thePlayer.lifes ; i++){
-				ctx.drawImage(Images['Heart'], i * 100,canvas.height - Images['Heart'].height);
-			}
+			ctx.fillStyle = "#fff";
+			ctx.fillRect(X,Y,W,H);
+			ctx.font = "30px Arial";
+			ctx.fillStyle = "#000";
+			ctx.fillText('Scores: '+ this.Score, X + 40 , Y + midH );
 
-			if(thePlayer.lifes <= 0){
-				thePlayer.enabled = false;
-				Scenes["SceneGameOver"].Score = thePlayer.killCounter;
-				Application.LoadedScene = Scenes["SceneGameOver"];
-			}
+			/*				socket.emit('gameStatus',{
+					status: GameStatus = false;
+				});*/
 		} 
 		else 
 		{
 			// Show pause menu
-			ctx.font = "30px Arial";
-			ctx.fillText("Controller calibration waited",10,50);
 		}
 	}
 

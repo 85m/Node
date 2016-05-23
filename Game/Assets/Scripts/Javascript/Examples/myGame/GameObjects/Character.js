@@ -36,8 +36,7 @@ function Character()
 
 	this.MouseOffset = new Vector();
 
-	this.velocity = 4;
-	this.charSigth = new Vector();
+
 
 	this.Parent = null;
 	
@@ -49,6 +48,14 @@ function Character()
 	this.Transform.Scale = new Vector(1,1);
 	this.Transform.Pivot = new Vector(0,0);
 	this.Transform.angle = 0;
+
+
+	/* CUSTOM PROPERTY */
+	this.velocity 	= 4;
+	this.charSigth 	= new Vector();
+	this.lifes 		= 3;
+	this.killCounter = 0;
+	/* *************** */
 
 	/**
 	 * @function SetPosition
@@ -350,7 +357,6 @@ function Character()
 			this.boxCollider = new Box(bX,bY,bW,bH);
 
 
-
 			this.started = true;
 			Print('System:GameObject ' + this.name + " Started !");
 		}
@@ -415,13 +421,15 @@ function Character()
 		this.Renderer.Draw();
 		var killDistance = 150;//light and kill
 
-		//this.Transform.angle = -Input.Orientation;
-		if(Input.KeysDown[37]){
+		this.Transform.angle = -Input.Mobile.alpha;
+
+		//console.log(Input.Mobile.alpha);
+/*		if(Input.KeysDown[37]){
 			this.Transform.angle -= this.velocity;
 		}
 		if(Input.KeysDown[39]){
 			this.Transform.angle += this.velocity;
-		}
+		}*/
 
 		this.charSigth = new Vector(1,1).FromAngle( Math.DegreeToRadian(this.Transform.angle - 90) ).Normalize();
 		for (var i in Application.LoadedScene.GameObjects) {
@@ -437,9 +445,14 @@ function Character()
 					var res = Math.DotProduct(this.charSigth, go.charSigth);
 					if(res > 0.8){
 						 Application.LoadedScene.GameObjects.splice(i,1);
+						 this.killCounter++;
 					}
 				}
-
+				if(distance <= 70){
+					if(!this.lifes <= 0){
+						this.lifes--;
+					}
+				}
 			}
 		}
 
