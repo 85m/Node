@@ -34,7 +34,13 @@ var ImagesPath =
 	// { name:"monImage",path: "background/image.png"},
 	{ name:"Boy",		path: "Examples/PlanetCute/Character_Boy.png"},
 	{ name:"Enemy Bug",	path: "Examples/PlanetCute/Enemy_Bug.png"},
-	{ name:"Heart",	path: "Examples/PlanetCute/Heart.png"}
+	{ name:"Heart",		path: "Examples/PlanetCute/Heart.png"},
+	{ name:"Hero",		path: "Examples/PlanetCute/Characters.png"},
+	//{ name:"Dragons",	path: "Examples/PlanetCute/Dragons.png"},
+	{ name:"Char",		path: "Examples/PlanetCute/Char.png"},
+	{ name:"dragonVert",path: "Examples/PlanetCute/dragon_vert.png"},
+	{ name:"map",path: "Examples/PlanetCute/map.jpg"},
+	{ name:"tile",path: "Examples/PlanetCute/tile.jpg"}
 ];
 var Images = {};
 

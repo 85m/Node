@@ -50,6 +50,13 @@ function Enemy()
 	this.Transform.Pivot = new Vector(0,0);
 	this.Transform.angle = 0;
 
+
+	/* ENEMY PROPERTY */
+	this.type = null;
+	this.life = null;
+	this.ifHasLife = false;
+	/* ************** */
+
 	/**
 	 * @function SetPosition
 	 * @memberof GameObjects/GameObjects
@@ -293,11 +300,11 @@ function Enemy()
 	 * */
 	this.SetSpriteSheet = function(_img, _sizeFrame, _animationLength) 
 	{
-	    if(typeof _img != 'string') PrintErr("Parameter img in SetSpriteSheet");
+	    //if(typeof _img != 'string') PrintErr("Parameter img in SetSpriteSheet");
 		if(!(_sizeFrame instanceof(Vector))) PrintErr("Parameter sizeFrame in SetSpriteSheet");
 	    if(typeof _animationLength != 'number') PrintErr("Parameter animationLength in SetSpriteSheet");
 		this.Renderer.isSpriteSheet = true;
-		this.Animation.totalAnimationLength = _animationLength || 0.5;
+		this.Renderer.Animation.totalAnimationLength = _animationLength || 0.5;
 		this.Renderer.Material.SizeFrame = _sizeFrame;
  		this.Renderer.Material.Source = _img;
  		this.Renderer.Material.CurrentFrame = new Vector(0,0);
@@ -338,9 +345,10 @@ function Enemy()
 		if (!this.started) {
 			// operation start
 
-			this.Renderer.Material.Source = Images["Enemy Bug"];
-			this.Renderer.opacity.status = true;
-			this.Renderer.opacity.alpha = 0;
+			if(Math.random() > 0.8){
+				this.ifHasLife = true;
+				this.life = 30;
+			}
 
 			//For random position defined by center of screen (position of hero)
 			var EnemyDistanceByHero = 500;
@@ -352,17 +360,16 @@ function Enemy()
 			var bW = 100/2;
 			var bH = 200/2;
 
-
 			this.SetPosition(bX,bY);
 			this.SetSize(bW,bH);
 			this.SetScale(1,1);
 			this.SetPivot(0.505,0.67);
 
-
 			var c = new Vector(bX - canvas.width/2,bY - canvas.height/2);
 			var newAngle = Math.RadianToDegree( c.GetAngle() );
-
 			this.Transform.angle = newAngle + 180;
+
+			this.SetSpriteSheet(Images["dragonVert"], new Vector(32,32), 3 );
 
 			if (this.Physics.colliderIsSameSizeAsTransform) 
 			{
@@ -432,6 +439,9 @@ function Enemy()
 	 * */
 	this.Update = function() 
 	{
+
+		this.Renderer.Animation.animated = true;
+
 		this.Transform.RelativePosition.x += Math.cos( Math.DegreeToRadian(this.Transform.angle)) * 2 ;
 		this.Transform.RelativePosition.y += Math.sin( Math.DegreeToRadian(this.Transform.angle)) * 2 ;
 
@@ -441,7 +451,7 @@ function Enemy()
 		//console.log(this.Renderer.opacity);
 		this.Renderer.Draw();
 
-		this.PostUpdate();	
+		this.PostUpdate();
 	};
 	/**
 	 * @function PostUpdate
@@ -468,7 +478,12 @@ function Enemy()
 	 * */
 	this.GUI = function() 
 	{
-		
+		if(this.ifHasLife){
+			for (var i = 0; i < this.life; i++) {
+				ctx.fillStyle = '#D26767';
+				ctx.fillRect(this.Transform.Position.x,this.Transform.Position.y-40, i, 2);
+			}
+		}
 	}
 
 	/**

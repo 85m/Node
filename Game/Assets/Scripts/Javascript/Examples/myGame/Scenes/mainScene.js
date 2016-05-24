@@ -26,8 +26,6 @@ function mainScene()
 
 	this.player = null;
 	this.ennemyCounter = 0;
-
-
 	/**
 	 * Called at the instruction new Scene().
 	 * */
@@ -47,7 +45,6 @@ function mainScene()
 		{
 			Time.SetTimeWhenSceneBegin();
 
-			canvas.style.background = 'black';
 			// operation start
 			var character = new Character();
 			this.player = character;
@@ -57,6 +54,8 @@ function mainScene()
 				var enemy = new Enemy();
 				this.GameObjects.push(enemy);
 			}*/
+
+
 
 			this.started = true;
 			Print('System:Scene ' + this.name + " Started !");
@@ -73,8 +72,15 @@ function mainScene()
 
 		if (!Application.GamePaused) 
 		{
+			var pat = ctx.createPattern(Images['tile'],"repeat");
+			ctx.rect(0,0,canvas.width,canvas.height);
+			ctx.fillStyle = pat;
+			ctx.fill();
+			ctx.fillStyle = 'rgba(0,0,0,.8)';
+			ctx.fillRect(0,0,canvas.width,canvas.height);
+			
 			this.ennemyCounter++;
-			if(this.ennemyCounter == 40){
+			if(this.ennemyCounter == 60){
 				this.ennemyCounter = 0;
 				if(Math.random() > 0.60){
 					var enemy = new Enemy();
@@ -105,14 +111,22 @@ function mainScene()
 		var thePlayer = Application.LoadedScene.player;
 		if (!Application.GamePaused) 
 		{
+			//Show UI
+
+			//Set score text
 			ctx.font = "30px Arial";
+			//DISPLAY BONUS
+			if(thePlayer.bonusLight.activated){
+				ctx.fillStyle = "#f00";
+				ctx.fillText('Bonus: '+ thePlayer.bonusLight.duration, canvas.width - 200, canvas.height - 100);
+			}
+			//DISPLAY SCORE
 			ctx.fillStyle = "#fff";
 			ctx.fillText('Scores: '+ thePlayer.killCounter, canvas.width - 200, canvas.height - 50);
-			//Show UI
-			//SET CHARACTER LIFE
 
+			//SET CHARACTER LIFE
 			for(var i = 0 ; i < thePlayer.lifes ; i++){
-				ctx.drawImage(Images['Heart'], i * 100,canvas.height - Images['Heart'].height);
+				ctx.drawImage(Images['Heart'], i * Images['Heart'].width, canvas.height - Images['Heart'].height);
 			}
 
 			if(thePlayer.lifes <= 0){

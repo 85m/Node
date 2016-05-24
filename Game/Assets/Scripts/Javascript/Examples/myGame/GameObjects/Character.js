@@ -51,10 +51,19 @@ function Character()
 
 
 	/* CUSTOM PROPERTY */
-	this.velocity 	= 4;
-	this.charSigth 	= new Vector();
-	this.lifes 		= 3;
-	this.killCounter = 0;
+	this.velocity 		= 4;
+	this.charSigth 		= new Vector();
+	this.lifes 			= 3; //character life
+	this.killDistance   = null;
+	this.killCounter 	= 0; //enemy kill counter
+	this.lightColor		= null;
+	this.lightLength 	= 1; //weapon property
+	this.lightKillCounter = 0; //umber of enemy kill with light
+	this.bonusLight = {
+		activated:false,
+		duration:null
+	}; //the duration of the bonus
+
 	/* *************** */
 
 	/**
@@ -291,11 +300,12 @@ function Character()
 	 * */
 	this.SetSpriteSheet = function(_img, _sizeFrame, _animationLength) 
 	{
-	    if(typeof _img != 'string') PrintErr("Parameter img in SetSpriteSheet");
+		//console.log(_img,_sizeFrame,_animationLength);
+	    //if(typeof _img != 'string') PrintErr("Parameter img in SetSpriteSheet");
 		if(!(_sizeFrame instanceof(Vector))) PrintErr("Parameter sizeFrame in SetSpriteSheet");
 	    if(typeof _animationLength != 'number') PrintErr("Parameter animationLength in SetSpriteSheet");
 		this.Renderer.isSpriteSheet = true;
-		this.Animation.totalAnimationLength = _animationLength || 0.5;
+		this.Renderer.Animation.totalAnimationLength = _animationLength || 0.5;
 		this.Renderer.Material.SizeFrame = _sizeFrame;
  		this.Renderer.Material.Source = _img;
  		this.Renderer.Material.CurrentFrame = new Vector(0,0);
@@ -336,17 +346,19 @@ function Character()
 		if (!this.started) {
 			// operation start
 
-			this.Renderer.Material.Source = Images["Boy"];
+			this.lightColor = 'rgba(252,240,107,.3)';
 
 			var bX = canvas.width/2;
 			var bY = canvas.height/2;
-			var bW = 100;
-			var bH = 200;
-
+			var bW = 16;
+			var bH = 16;
 			this.SetPosition(bX,bY);
 			this.SetSize(bW,bH);
-			this.SetScale(1,1);
+			this.SetScale(5,5);
 			this.SetPivot(0.505,0.67);
+			
+			this.SetSpriteSheet(Images["Char"], new Vector(32,32),3);
+
 
 			if (this.Physics.colliderIsSameSizeAsTransform) 
 			{
@@ -355,7 +367,6 @@ function Character()
 
 			//For collider
 			this.boxCollider = new Box(bX,bY,bW,bH);
-
 
 			this.started = true;
 			Print('System:GameObject ' + this.name + " Started !");
@@ -416,20 +427,33 @@ function Character()
 	 * Call postUpdate function (each frame)
 	 * */
 	this.Update = function() 
-	{
-
-		this.Renderer.Draw();
-		var killDistance = 150;//light and kill
-
-		this.Transform.angle = -Input.Mobile.alpha;
-
-		//console.log(Input.Mobile.alpha);
-/*		if(Input.KeysDown[37]){
+	{		
+		if(this.bonusLight.activated)
+		{
+			this.bonusLight.duration--;
+			this.lightLength = 3;
+			if(this.bonusLight.duration == 0)
+			{
+				this.bonusLight.activated = false;
+				this.lightLength = 1;
+				this.lightKillCounter = 0;
+				this.lightColor = 'rgba(252,240,107,.3)';
+			}
+		}
+		this.killDistance = 150 * this.lightLength;//light and kill
+		
+		this.Renderer.Animation.animated = true;
+		if(Input.Mobile.connected){
+			this.Transform.angle = -Input.Mobile.alpha;
+		}
+		if(Input.KeysDown[37]){
 			this.Transform.angle -= this.velocity;
 		}
 		if(Input.KeysDown[39]){
 			this.Transform.angle += this.velocity;
-		}*/
+		}
+
+
 
 		this.charSigth = new Vector(1,1).FromAngle( Math.DegreeToRadian(this.Transform.angle - 90) ).Normalize();
 		for (var i in Application.LoadedScene.GameObjects) {
@@ -440,38 +464,47 @@ function Character()
 				if(distance < 320){
 					go.Renderer.opacity.alpha += .01;
 				}
-				if(distance < killDistance){
+				if(distance < this.killDistance){
 					go.Renderer.opacity.alpha = 1;
+
+					if(distance <= 10){
+						this.lifes--;
+						var zone = {x:0,y:0,w:canvas.width,h:canvas.height};
+						Gfx.Filters.Flash(zone, .9, '#000000');
+						Application.LoadedScene.GameObjects.splice(i,1);
+					}
+
 					var res = Math.DotProduct(this.charSigth, go.charSigth);
 					if(res > 0.8){
-						 Application.LoadedScene.GameObjects.splice(i,1);
-						 this.killCounter++;
+						if(go.ifHasLife){
+							go.life--;
+							if(go.life == 0){
+								Application.LoadedScene.GameObjects.splice(i,1);
+							}
+						}else{
+							Application.LoadedScene.GameObjects.splice(i,1);
+						}
+
+						this.killCounter++;
+						this.lightKillCounter ++;
+
+						if(this.lightKillCounter == 3){
+							this.bonusLight.activated = true;
+						 	this.bonusLight.duration = 1000;
+						 	this.lightColor = 'rgba(255,0,0,.2)';
+						}
 					}
 				}
-				if(distance <= 70){
-					if(!this.lifes <= 0){
-						this.lifes--;
-					}
-				}
+
 			}
 		}
-
-/*		var Pi = Math.PI;
-	 ctx.beginPath();
-	 var startAngle = .4*Pi;
-	 var endAngle = .6*Pi;
-
-	 //ctx.moveTo(this.Transform.Position.x, this.Transform.Position.y-15);
-	 //ctx.lineTo(this.Transform.Position.x, this.Transform.Position.y-15);
-	 ctx.arc(
-	 this.Transform.Position.x,
-	 this.Transform.Position.y-15,
-	 70,
-	 startAngle,
-	 endAngle,
-	 false);
-	 ctx.stroke();*/
-		var x = this.Transform.Position.x,y = this.Transform.Position.y-15, innerRadius = 20,outerRadius = killDistance, radius = outerRadius;
+	 	//halo autour du personnage
+		var x = this.Transform.Position.x,
+			y = this.Transform.Position.y-15,
+			innerRadius = 20,
+			outerRadius = this.killDistance, 
+			radius = outerRadius;
+		
 		var gradient = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
 		gradient.addColorStop(0.000, 'rgba(255, 255, 255, .2)');
 		gradient.addColorStop(1.000, 'rgba(255, 255, 255, 0.000)');
@@ -479,7 +512,29 @@ function Character()
 		ctx.fillStyle = gradient;
 		ctx.fill();
 
+		//champ de vision du personnage
+		ctx.beginPath();
+		ctx.moveTo(this.Transform.Position.x, this.Transform.Position.y);
+		//non utilisé
+		//var radX = this.Transform.Position.x + Math.cos(Math.DegreeToRadian(10))*killDistance;
+		//var radY = this.Transform.Position.y + Math.sin(Math.DegreeToRadian(10))*killDistance;
+		var ninethyDg 	= this.Transform.angle + 90; // dans arc le degree 0 est a droite - ajout de 90 pour mettre la ligne en bas
+		//la valeur envoye doit etre en radian (compris en 0 et 2 PI) et non en degree
+		var startAngle 	= Math.DegreeToRadian(ninethyDg - 10);
+		var endAngle 	= Math.DegreeToRadian(ninethyDg + 10);
 
+		ctx.arc(
+		this.Transform.Position.x,
+		this.Transform.Position.y,
+		this.killDistance,
+		startAngle,
+		endAngle);
+
+		ctx.lineTo(this.Transform.Position.x, this.Transform.Position.y);
+		ctx.fillStyle = this.lightColor;
+		ctx.fill();
+
+		this.Renderer.Draw();
 		this.PostUpdate();	
 	};
 	/**

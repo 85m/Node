@@ -93,20 +93,17 @@ function SceneGameOver()
 		if (!Application.GamePaused) 
 		{
 			//Show UI
-			var W = 200, midW = (W/2);
-			var H = 75, midH = (H/2);
-			var X = (canvas.width / 2) - midW;
-			var Y = (canvas.height / 2) - midH;
+			var X = (canvas.width / 2);
+			var Y = (canvas.height / 2);
 
-			ctx.fillStyle = "#fff";
-			ctx.fillRect(X,Y,W,H);
 			ctx.font = "30px Arial";
-			ctx.fillStyle = "#000";
-			ctx.fillText('Scores: '+ this.Score, X + 40 , Y + midH );
+			ctx.textAlign = 'center';
 
-			/*				socket.emit('gameStatus',{
-					status: GameStatus = false;
-				});*/
+			ctx.fillStyle = "#ff0000";
+			ctx.fillText('Game Over: ', X , Y);
+			ctx.fillStyle = "#000";
+			ctx.fillText('Scores: '+this.Score, X , Y + 50 );
+
 		} 
 		else 
 		{

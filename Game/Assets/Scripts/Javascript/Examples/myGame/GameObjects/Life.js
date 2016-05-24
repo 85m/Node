@@ -333,12 +333,12 @@ function Life(config)
 
 			var bX = config.x;
 			var bY = canvas.height - Images["Heart"].height;
-			var bW = 101;
+			var bW = 10;
 			var bH = 171;
 
 			this.SetPosition(bX,bY);
 			this.SetSize(bW,bH);
-			this.SetScale(1,1);
+			this.SetScale(.2,.2);
 			this.SetPivot(0,0);
 
 			if (this.Physics.colliderIsSameSizeAsTransform) 

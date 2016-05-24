@@ -82,7 +82,7 @@ var Gfx =
 		{
 			Gfx.Filters.Greyscale(_affectedZone);
 			ctx.fillStyle = _color;
-			ctx.fillRect(_affectedZone.x, _affectedZone.x, _affectedZone.w, _affectedZone.h)
+			ctx.fillRect(_affectedZone.x, _affectedZone.x, _affectedZone.w, _affectedZone.h);
 
 		},
 
@@ -123,6 +123,7 @@ var Gfx =
 		* @param {String} _color - Set the flash color
 		**/
 		Flash: function(_affectedZone, _power, _color) {
+			_color = convertHex(_color,_power);//must be in Hex format color
 			ctx.fillStyle = _color;
 			ctx.fillRect(_affectedZone.x, _affectedZone.x, _affectedZone.w, _affectedZone.h);	
 		}
